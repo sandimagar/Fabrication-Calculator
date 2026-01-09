@@ -1,16 +1,30 @@
-
 "use client";
 import { useState } from "react";
 
-export default function FabricationModule({ data }) {
- 
+// 1. Define what the "Conversion" object looks like
+interface Conversion {
+  from: string;
+  to: string;
+  operation: string;
+  conversionRate: number;
+}
+
+// 2. Define what the main "Data" object looks like
+interface FabricationData {
+  title: string;
+  defaultH: number;
+  defaultW: number;
+  conversions: Conversion[];
+}
+
+// 3. Tell the component to expect "data" matches that interface
+export default function FabricationModule({ data }: { data: FabricationData }) {
   const [height, setHeight] = useState(data.defaultH);
   const [width, setWidth] = useState(data.defaultW);
 
-  
-  const calculate = (baseValue, rate, operation) => {
-    const val = parseFloat(baseValue);
-    const r = parseFloat(rate);
+  const calculate = (baseValue: number, rate: number, operation: string) => {
+    const val = Number(baseValue); // Ensure it's a number
+    const r = Number(rate);
     
     switch (operation) {
       case "add": return val + r;
@@ -31,8 +45,8 @@ export default function FabricationModule({ data }) {
           <input
             type="number"
             value={height}
-            onChange={(e) => setHeight(e.target.value)}
-            className="mt-1 block w-full p-2 border rounded bg-gray-50"
+            onChange={(e) => setHeight(Number(e.target.value))}
+            className="mt-1 block w-full p-2 border rounded bg-gray-50 text-gray-900"
           />
         </div>
         <div>
@@ -40,16 +54,15 @@ export default function FabricationModule({ data }) {
           <input
             type="number"
             value={width}
-            onChange={(e) => setWidth(e.target.value)}
-            className="mt-1 block w-full p-2 border rounded bg-gray-50"
+            onChange={(e) => setWidth(Number(e.target.value))}
+            className="mt-1 block w-full p-2 border rounded bg-gray-50 text-gray-900"
           />
         </div>
       </div>
 
-      
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="p-3">Profile Name (To)</th>
               <th className="p-3">Source (From)</th>
@@ -59,13 +72,12 @@ export default function FabricationModule({ data }) {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {data.conversions.map((item, index) => {
-             
               const baseValue = item.from === "Height" ? height : width;
               const result = calculate(baseValue, item.conversionRate, item.operation);
 
               return (
                 <tr key={index}>
-                  <td className="p-3 font-medium">{item.to}</td>
+                  <td className="p-3 font-medium text-gray-900">{item.to}</td>
                   <td className="p-3 text-gray-500">{item.from}</td>
                   <td className="p-3 text-gray-400">
                     {item.operation} {item.conversionRate}
